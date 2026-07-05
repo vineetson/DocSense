@@ -8,24 +8,17 @@ from langchain_core.runnables import RunnablePassthrough
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
-
 load_dotenv()
-
 # Set your Google API key as an environment variable or directly
 # It's generally recommended to use environment variables for sensitive keys
 # os.environ["GOOGLE_API_KEY"] = "YOUR_GOOGLE_API_KEY"
 # If you're setting it directly in the code for testing, be cautious in production
-
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-
-st.header("My First Chatbot")
-
+GOOGLE_API_KEY=os.getenv("GOOGLE_API_KEY")
+st.header("DocSense Chatbot")
 
 with st.sidebar:
     st.title("Your Documents")
-    file = st.file_uploader(
-        "Upload a PDF file and start asking questions", type="pdf")
-
+    file = st.file_uploader("Upload a PDF file and start asking questions", type="pdf")
 
 # Extract contents from the PDF and chunk it
 if file is not None:
@@ -36,37 +29,36 @@ if file is not None:
             text += page.extract_text() + "\n"
     # st.write(text) # You can uncomment this for debugging if needed
 
-    # split text into chunks
+    #split text into chunks
     text_splitter = RecursiveCharacterTextSplitter(
         separators=["\n\n", "\n", ". ", ""],
         chunk_size=1000,
         chunk_overlap=200
     )
-
     chunks = text_splitter.split_text(text)
     # st.write(chunks) # This should now display the chunks
 
     # generating embeddings using GoogleGenerativeAIEmbeddings
     # Use a known working model like "gemini-embedding-2-preview"
     try:
-        embeddings = GoogleGenerativeAIEmbeddings(
-            model="gemini-embedding-2-preview", google_api_key=GOOGLE_API_KEY)
+        embeddings = GoogleGenerativeAIEmbeddings(model="gemini-embedding-2-preview", google_api_key=GOOGLE_API_KEY)
         # Or simply: embeddings = GoogleGenerativeAIEmbeddings(google_api_key=GOOGLE_API_KEY)
         # Or for a newer model if available: embeddings = GoogleGenerativeAIEmbeddings(model="gemini-embedding-1.5-flash", google_api_key=GOOGLE_API_KEY)
-        # store embeddings in vector db
+
+        #store embeddings in vector db
         vector_store = FAISS.from_texts(chunks, embeddings)
-        st.success(
-            "PDF processed and embeddings generated! Go ahead and ask questions!!!")
+
+        st.success("PDF processed and embeddings generated!")
+
     except Exception as e:
         st.error(f"An error occurred during embedding generation: {e}")
-        st.warning(
-            "Please check your Google API Key and the embedding model name.")
+        st.warning("Please check your Google API Key and the embedding model name.")
         st.info("Try using 'text-embedding-004' as the model, or ensure your API key is valid and has access to Generative AI services.")
 
-    # get user question
-    user_question = st.text_input("Type your question here")
+    #get user question 
+    user_question=st.text_input("Type your question here")
 
-    # generate answer
+    # generate anser
     # question -> embeddings -> similarity search -> results to LLM -> response (CHAIN)
 
     def format_docs(docs):
@@ -74,17 +66,16 @@ if file is not None:
 
     retriever = vector_store.as_retriever(
         search_type="mmr",
-        search_kwargs={"k": 4}
+        search_kwargs={"k":4}
     )
 
     # define the LLM and prompts
-
+    # llm=GoogleGenerativeAI(model="gemini-3.5-flash", google_api_key=GOOGLE_API_KEY)
     llm = ChatGoogleGenerativeAI(
         model="gemini-3.5-flash",
         temperature=0.3,  # Gemini 3.0+ defaults to 1.0, temperature denotes randomness, lower means more deterministic, higher means more creative
         max_tokens=1000,
         google_api_key=GOOGLE_API_KEY
-
     )
 
     # provide the prompts
@@ -110,5 +101,5 @@ if file is not None:
     )
 
     if user_question:
-        response = chain.invoke(user_question)
+        response=chain.invoke(user_question)
         st.write(response)
