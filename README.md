@@ -1,4 +1,4 @@
-# 📄 PDF Chatbot with Streamlit and Google Gemini (RAG)
+# 📄 DocSense - PDF Chatbot with Streamlit and Google Gemini (RAG)
 
 This project implements a conversational AI chatbot that can answer questions based on the content of uploaded PDF documents. It leverages Streamlit for the user interface, LangChain for orchestrating the RAG (Retrieval Augmented Generation) pipeline, and Google's Gemini models for embeddings and language generation.
 
@@ -32,8 +32,8 @@ Before you begin, ensure you have the following installed:
 Clone the repository (or download the files):
 
 ```bash
-git clone https://github.com/your-username/pdf-chatbot-rag.git
-cd pdf-chatbot-rag
+git clone https://github.com/vineetson/DocSense.git
+cd DocSense
 ```
 
 (Replace your-username with your actual GitHub username if you've forked it, or adjust the path if you downloaded directly.)
