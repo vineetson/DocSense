@@ -55,7 +55,7 @@ if file is not None:
         st.warning("Please check your Google API Key and the embedding model name.")
         st.info("Try using 'text-embedding-004' as the model, or ensure your API key is valid and has access to Generative AI services.")
 
-    #get user question 
+    #get user question
     user_question=st.text_input("Type your question here")
 
     # generate anser
